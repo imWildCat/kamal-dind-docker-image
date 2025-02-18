@@ -40,8 +40,12 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const repo = github.repository;
-            return repo.toLowerCase();
+            const repo = github.context.repo.repo;
+            if (repo) {
+              return repo.toLowerCase();
+            } else {
+              throw new Error("Repository name is undefined");
+            }
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
