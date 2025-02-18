@@ -34,22 +34,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set lowercase repository name
-        id: repo_name
-        uses: actions/github-script@v4
-        with:
-          result-encoding: string
-          script: |
-            const repo = github.context.repo.repo;
-            if (repo) {
-              return repo.toLowerCase();
-            } else {
-              throw new Error("Repository name is undefined");
-            }
+      - name: Set Lowercase Repository Owner
+        id: lowercase_owner
+        run: |
+          LOWERCASE_OWNER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "REPO_LOWER=$LOWERCASE_OWNER" >> $GITHUB_ENV
+        shell: bash
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ steps.repo_name.outputs.result }}:latest
+          tags: ghcr.io/$REPO_LOWER:latest
