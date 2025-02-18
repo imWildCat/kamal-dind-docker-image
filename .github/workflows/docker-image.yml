@@ -34,9 +34,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set lowercase repository name
+        id: repo_name
+        uses: actions/github-script@v4
+        with:
+          result-encoding: string
+          script: |
+            const repo = github.repository;
+            return repo.toLowerCase();
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ steps.repo_name.outputs.result }}:latest
