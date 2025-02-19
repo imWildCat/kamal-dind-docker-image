@@ -34,16 +34,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Lowercase Repository Owner
-        id: lowercase_owner
-        run: |
-          LOWERCASE_OWNER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          echo "REPO_LOWER=$LOWERCASE_OWNER" >> $GITHUB_ENV
-        shell: bash
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ghcr.io/$REPO_LOWER:latest
+          tags: imwildcat/kamal-dind-docker-image:latest
